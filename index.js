@@ -1,26 +1,21 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { execSync } = require("child_process");
+const chromium = require("@sparticuz/chromium");
 const puppeteer = require("puppeteer-core");
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
-try {
-  execSync("apt-get update && apt-get install -y chromium-browser", { stdio: "inherit" });
-} catch (e) {
-  console.error("⚠️ Failed to install Chromium", e);
-}
-
 app.post("/submit", async (req, res) => {
   const { name, phone, tour_details } = req.body;
 
   try {
-      const browser = await puppeteer.launch({
-      headless: true,
-      executablePath: '/usr/bin/chromium-browser',
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
-      });
+const browser = await puppeteer.launch({
+  args: chromium.args,
+  defaultViewport: chromium.defaultViewport,
+  executablePath: await chromium.executablePath(),
+  headless: chromium.headless,
+});
 
     const page = await browser.newPage();
     await page.goto("https://rocketour.co/affiliate-form/", { waitUntil: "networkidle2" });
