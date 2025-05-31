@@ -7,7 +7,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post("/submit", async (req, res) => {
-  const { name, phone, tour_details } = req.body;
+  const { name, phone, tour_details} = req.body;
 
   try {
 const browser = await puppeteer.launch({
@@ -24,7 +24,7 @@ const browser = await puppeteer.launch({
     await page.type('input[name="city"]', "רומא");
     await page.type('input[name="leadName"]', name);
     await page.type('input[name="leadPhone"]', phone);
-    await page.type('input[name="notes"]', tour_details);
+    await page.type('textarea[name="notes"]', tour_details);
 
     await page.click('input[type="submit"]');
     await page.waitForTimeout(3000);
