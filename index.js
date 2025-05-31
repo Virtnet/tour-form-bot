@@ -9,10 +9,11 @@ app.post("/submit", async (req, res) => {
   const { name, phone, tour_details } = req.body;
 
   try {
-    const browser = await puppeteer.launch({
+      const browser = await puppeteer.launch({
       headless: true,
+      executablePath: '/usr/bin/chromium-browser',
       args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    });
+      });
 
     const page = await browser.newPage();
     await page.goto("https://rocketour.co/affiliate-form/", { waitUntil: "networkidle2" });
