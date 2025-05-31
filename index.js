@@ -1,9 +1,16 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const { execSync } = require("child_process");
 const puppeteer = require("puppeteer-core");
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
+
+try {
+  execSync("apt-get update && apt-get install -y chromium-browser", { stdio: "inherit" });
+} catch (e) {
+  console.error("⚠️ Failed to install Chromium", e);
+}
 
 app.post("/submit", async (req, res) => {
   const { name, phone, tour_details } = req.body;
