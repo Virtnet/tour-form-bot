@@ -3,14 +3,8 @@ const bodyParser = require("body-parser");
 const chromium = require("@sparticuz/chromium");
 const fetch = require("node-fetch");
 const puppeteer = require("puppeteer-core");
-const cors = require("cors");
 
 const app = express();
-
-// ✅ Allow requests from your live frontend
-app.use(cors({
-  origin: "https://saveforyourtrip.com",
-}));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // ✅ Add this to support JSON body parsing
