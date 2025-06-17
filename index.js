@@ -18,6 +18,7 @@ app.use(express.json());
 
 app.post("/submit", async (req, res) => {
   const { name, email, phone, datetour, npart, tour_details } = req.body;
+  console.log("Received:", req.body);
 
   try {
     const browser = await puppeteer.launch({
