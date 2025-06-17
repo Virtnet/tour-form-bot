@@ -1,13 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const chromium = require("@sparticuz/chromium");
+const fetch = require("node-fetch");
 const puppeteer = require("puppeteer-core");
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post("/submit", async (req, res) => {
-  const { name, phone, tour_details} = req.body;
+  const { name, email, phone, datetour, npart, tour_details} = req.body;
 
   try {
 const browser = await puppeteer.launch({
@@ -17,28 +18,17 @@ const browser = await puppeteer.launch({
   headless: chromium.headless,
 });
 
-    const page = await browser.newPage();
-    await page.goto("https://rocketour.co/affiliate-form/", { waitUntil: "networkidle2" });
-    
-    await page.type('input[name="affiliateId"]', "242");
-    await page.type('input[name="city"]', "רומא");
-    await page.type('input[name="leadName"]', name);
-    await page.type('input[name="leadPhone"]', phone);
-    await page.type('textarea[name="notes"]', tour_details);
+    await fetch("https://script.google.com/macros/s/AKfycbxk4sV2xLZcKbnMQRtaMer-FxeFsUk1JjvivIK4g6f5fFFlXvQfzD92GsbEurjN7Fvw/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, phone, datetour, npart, tour_details })
+    });
 
-    await Promise.all([
-      page.click('button[type="submit"]'),
-      page.waitForNavigation({ waitUntil: 'networkidle0' }) // or 'domcontentloaded'
-    ]);
-    
-    await page.waitForTimeout(3000);
 
-    await browser.close();
-
-    res.send("✅ Tour submitted successfully!");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("❌ Error submitting the form.");
+res.status(200).send("✅ Form submitted to Rocketour and Google Sheet.");
+  } catch (error) {
+    console.error("❌ Error:", error);
+    res.status(500).send("Error submitting form.");
   }
 });
 
