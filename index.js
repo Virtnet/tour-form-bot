@@ -3,11 +3,18 @@ const bodyParser = require("body-parser");
 const chromium = require("@sparticuz/chromium");
 const fetch = require("node-fetch");
 const puppeteer = require("puppeteer-core");
+const cors = require("cors");
 
 const app = express();
 
+// ✅ Allow requests from your frontend domain
+app.use(cors({
+  origin: "https://saveforyourtrip.com", // change if needed
+}));
+
+// ✅ Parse URL-encoded form data and JSON
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json()); // ✅ Add this to support JSON body parsing
+app.use(express.json()); // <- required for JSON from fetch()
 
 app.post("/submit", async (req, res) => {
   const { name, email, phone, datetour, npart, tour_details } = req.body;
