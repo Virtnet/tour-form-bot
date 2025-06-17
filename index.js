@@ -14,7 +14,7 @@ app.use(cors({
 
 // ✅ Parse URL-encoded form data and JSON
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json()); // <- required for JSON from fetch()
+app.use(express.json()); 
 
 app.post("/submit", async (req, res) => {
   const { name, email, phone, datetour, npart, tour_details } = req.body;
