@@ -21,6 +21,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); 
 
 app.post("/submit", async (req, res) => {
+  const allowedIps = ["104.21.42.47"]; // e.g. Cloudflare or host IP
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+  if (!allowedIps.includes(ip)) {
+    console.warn("❌ Rejected IP:", ip);
+    return res.status(403).send("Access Denied");
+  }
   const { name, email, phone, datetour, npart, tour_details } = req.body;
   console.log("Received:", req.body);
 
@@ -45,8 +52,9 @@ app.post("/submit", async (req, res) => {
   }
 });
 
+
 app.get("/", (req, res) => {
-  res.send("Form bot is running.");
+  res.status(403).send("Forbidden");
 });
 
 app.listen(process.env.PORT || 3000, () => {
