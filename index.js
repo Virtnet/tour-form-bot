@@ -7,6 +7,10 @@ const cors = require("cors");
 
 const app = express();
 
+app.get("/submit", (req, res) => {
+  res.status(403).send("Forbidden");
+});
+
 // ✅ Allow requests from your frontend domain
 app.use(cors({
   origin: "https://saveforyourtrip.com", // change if needed
