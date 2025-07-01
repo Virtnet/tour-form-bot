@@ -4,32 +4,57 @@ const chromium = require("@sparticuz/chromium");
 const fetch = require("node-fetch");
 const puppeteer = require("puppeteer-core");
 const cors = require("cors");
+const { IpFilter } = require("express-ipfilter");
 
 const app = express();
 
+const cloudflareIps = [
+  "173.245.48.0/20",
+  "103.21.244.0/22",
+  "103.22.200.0/22",
+  "103.31.4.0/22",
+  "141.101.64.0/18",
+  "108.162.192.0/18",
+  "190.93.240.0/20",
+  "188.114.96.0/20",
+  "197.234.240.0/22",
+  "198.41.128.0/17",
+  "162.158.0.0/15",
+  "104.16.0.0/13",
+  "104.24.0.0/14",
+  "172.64.0.0/13",
+  "131.0.72.0/22"
+];
+
+// ✅ Restrict CORS to your frontend domain
+app.use(cors({
+  origin: "https://saveforyourtrip.com"
+}));
+
+// ✅ Middleware for parsing form data
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+
+// ✅ Block direct access to the home page
+app.get("/", (req, res) => {
+  res.status(403).send("Forbidden");
+});
+
+// ✅ Block GET requests to /submit
 app.get("/submit", (req, res) => {
   res.status(403).send("Forbidden");
 });
 
-// ✅ Allow requests from your frontend domain
-app.use(cors({
-  origin: "https://saveforyourtrip.com", // change if needed
+// ✅ Restrict POST /submit by IP
+app.use("/submit", IpFilter(cloudflareIps, {
+  mode: "allow",
+  detectIp: (req) => req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"] || req.ip
 }));
 
-// ✅ Parse URL-encoded form data and JSON
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json()); 
-
+// ✅ Handle form submission
 app.post("/submit", async (req, res) => {
-  const allowedIps = ["104.21.42.47"]; // e.g. Cloudflare or host IP
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
-  if (!allowedIps.includes(ip)) {
-    console.warn("❌ Rejected IP:", ip);
-    return res.status(403).send("Access Denied");
-  }
   const { name, email, phone, datetour, npart, tour_details } = req.body;
-  console.log("Received:", req.body);
+  console.log("✅ Received:", req.body);
 
   try {
     const browser = await puppeteer.launch({
@@ -47,16 +72,12 @@ app.post("/submit", async (req, res) => {
 
     res.status(200).send("✅ Form submitted to Rocketour and Google Sheet.");
   } catch (error) {
-    console.error("❌ Error:", error);
+    console.error("❌ Error submitting form:", error);
     res.status(500).send("Error submitting form.");
   }
 });
 
-
-app.get("/", (req, res) => {
-  res.status(403).send("Forbidden");
-});
-
+// ✅ Start the server
 app.listen(process.env.PORT || 3000, () => {
-  console.log("Server is running.");
+  console.log("🚀 Server is running.");
 });
