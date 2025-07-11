@@ -80,7 +80,7 @@ app.post("/submit", async (req, res) => {
     const page = await browser.newPage();
 
     // Go to Rocketour form page
-    await page.goto("https://www.rocketour.co.il/affiliate-form", { waitUntil: "networkidle2" });
+    await page.goto("https://rocketour.co/affiliate-form/", { waitUntil: "networkidle2" });
 
     // Fill out form fields
     await page.type('input[name="affiliateId"]', "242");
