@@ -80,7 +80,8 @@ app.post("/submit", async (req, res) => {
     await page.type('input[name="city"]', "רומא");
     await page.type('input[name="leadName"]', name);
     await page.type('input[name="leadPhone"]', phone);
-    await page.type('textarea[name="notes"]', \nמספר משתתפים: ${npart}\n${tour_details});
+    await page.type('textarea[name="notes"]', `\nמספר משתתפים: ${npart}\n${tour_details}`);
+
 
     await Promise.all([
       page.click('button[type="submit"]'),
