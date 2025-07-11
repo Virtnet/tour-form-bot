@@ -8,6 +8,9 @@ const { IpFilter } = require("express-ipfilter");
 
 const app = express();
 
+// IMPORTANT: Trust reverse proxies so req.ip uses X-Forwarded-For header correctly
+app.set('trust proxy', true);
+
 const cloudflareIps = [
   "173.245.48.0/20",
   "103.21.244.0/22",
@@ -56,7 +59,6 @@ app.use("/submit", (req, res, next) => {
 app.use("/submit", IpFilter(cloudflareIps, {
   mode: "allow",
   detectIp: (req) => req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"] || req.ip,
-  // Optional: send custom error on IP not allowed
   errorMessage: "Access denied from this IP"
 }));
 
