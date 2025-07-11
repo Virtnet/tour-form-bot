@@ -78,8 +78,6 @@ app.post("/submit", async (req, res) => {
     });
 
     const page = await browser.newPage();
-
-    // Go to Rocketour form page
     await page.goto("https://rocketour.co/affiliate-form/", { waitUntil: "networkidle2" });
 
     // Fill out form fields
@@ -92,8 +90,10 @@ app.post("/submit", async (req, res) => {
     // Submit the form and wait for navigation
     await Promise.all([
       page.click('button[type="submit"]'),
-      page.waitForNavigation({ waitUntil: "networkidle2" }),
+      page.waitForNavigation({ waitUntil: 'networkidle0' }) // or 'domcontentloaded'
     ]);
+    
+    await page.waitForTimeout(3000);
 
     await browser.close();
 
