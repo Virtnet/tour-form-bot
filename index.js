@@ -56,18 +56,6 @@ app.use("/submit", (req, res, next) => {
   next();
 });
 
-
-// IP whitelist filter with improved detectIp function
-app.use("/submit", IpFilter(cloudflareIps, {
-  mode: "allow",
-  detectIp: (req) => {
-    if (req.headers["cf-connecting-ip"]) return req.headers["cf-connecting-ip"];
-    if (req.headers["x-forwarded-for"]) return req.headers["x-forwarded-for"].split(",")[0].trim();
-    return req.ip;
-  },
-  errorMessage: "Access denied from this IP"
-}));
-
 // Handle form submission
 app.post("/submit", async (req, res) => {
   const { name, email, phone, datetour, npart, tour_details } = req.body;
