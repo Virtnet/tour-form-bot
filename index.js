@@ -57,6 +57,14 @@ app.post("/submit", async (req, res) => {
   console.log("✅ Received:", req.body);
 
   try {
+    // ✅ First: send to Google Sheets
+    await fetch("https://script.google.com/macros/s/AKfycbxk4sV2xLZcKbnMQRtaMer-FxeFsUk1JjvivIK4g6f5fFFlXvQfzD92GsbEurjN7Fvw/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, phone, datetour, npart, tour_details })
+    });
+
+    // ✅ Then: launch Puppeteer to fill Rocketour form
     const browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
@@ -64,18 +72,30 @@ app.post("/submit", async (req, res) => {
       headless: chromium.headless,
     });
 
-    await fetch("https://script.google.com/macros/s/AKfycbxk4sV2xLZcKbnMQRtaMer-FxeFsUk1JjvivIK4g6f5fFFlXvQfzD92GsbEurjN7Fvw/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, phone, datetour, npart, tour_details })
-    });
+    const page = await browser.newPage();
 
-    res.status(200).send("✅ Form submitted to Rocketour and Google Sheet.");
+    await page.goto("https://www.rocketour.co.il/affiliate-form", { waitUntil: "networkidle2" });
+
+    await page.type('input[name="affiliateId"]', "242");
+    await page.type('input[name="city"]', "רומא");
+    await page.type('input[name="leadName"]', name);
+    await page.type('input[name="leadPhone"]', phone);
+    await page.type('textarea[name="notes"]', \nמספר משתתפים: ${npart}\n${tour_details});
+
+    await Promise.all([
+      page.click('button[type="submit"]'),
+      page.waitForNavigation({ waitUntil: "networkidle2" }),
+    ]);
+
+    await browser.close();
+
+    res.status(200).send("✅ First saved to Google Sheet, then submitted to Rocketour.");
   } catch (error) {
     console.error("❌ Error submitting form:", error);
     res.status(500).send("Error submitting form.");
   }
 });
+
 
 // ✅ Start the server
 app.listen(process.env.PORT || 3000, () => {
