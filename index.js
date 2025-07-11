@@ -83,6 +83,7 @@ app.post("/submit", async (req, res) => {
     await page.type('textarea[name="notes"]', `\nמספר משתתפים: ${npart}\n${tour_details}`);
 
 
+
     await Promise.all([
       page.click('button[type="submit"]'),
       page.waitForNavigation({ waitUntil: "networkidle2" }),
