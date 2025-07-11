@@ -82,8 +82,6 @@ app.post("/submit", async (req, res) => {
     await page.type('input[name="leadPhone"]', phone);
     await page.type('textarea[name="notes"]', `\nמספר משתתפים: ${npart}\n${tour_details}`);
 
-
-
     await Promise.all([
       page.click('button[type="submit"]'),
       page.waitForNavigation({ waitUntil: "networkidle2" }),
@@ -97,7 +95,6 @@ app.post("/submit", async (req, res) => {
     res.status(500).send("Error submitting form.");
   }
 });
-
 
 // ✅ Start the server
 app.listen(process.env.PORT || 3000, () => {
