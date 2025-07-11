@@ -50,15 +50,21 @@ app.get("/submit", (req, res) => {
 
 // Log detected IP for /submit (optional, for debugging)
 app.use("/submit", (req, res, next) => {
-  const ip = req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"] || req.ip;
-  console.log("Detected IP for /submit:", ip);
+  console.log("Headers cf-connecting-ip:", req.headers["cf-connecting-ip"]);
+  console.log("Headers x-forwarded-for:", req.headers["x-forwarded-for"]);
+  console.log("req.ip:", req.ip);
   next();
 });
 
-// Restrict POST /submit by IP whitelist
+
+// IP whitelist filter with improved detectIp function
 app.use("/submit", IpFilter(cloudflareIps, {
   mode: "allow",
-  detectIp: (req) => req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"] || req.ip,
+  detectIp: (req) => {
+    if (req.headers["cf-connecting-ip"]) return req.headers["cf-connecting-ip"];
+    if (req.headers["x-forwarded-for"]) return req.headers["x-forwarded-for"].split(",")[0].trim();
+    return req.ip;
+  },
   errorMessage: "Access denied from this IP"
 }));
 
