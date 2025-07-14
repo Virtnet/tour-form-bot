@@ -40,13 +40,9 @@ const browser = await puppeteer.launch({
     await page.type('input[name="leadPhone"]', phone);
     await page.type('textarea[name="notes"]', `\nמספר משתתפים: ${npart}\n${tour_details}`);
 
-    await Promise.all([
-      page.click('button[type="submit"]'),
-      page.waitForNavigation({ waitUntil: 'domcontentloaded' }) // or 'domcontentloaded'
-    ]);
-    
-    await page.waitForTimeout(3000);
-
+    console.log("👉 Clicking submit...");
+    await page.click('button[type="submit"]');
+    await page.waitForTimeout(3000); // wait for form to process
     await browser.close();
 
     res.send("✅ Tour submitted successfully!");
