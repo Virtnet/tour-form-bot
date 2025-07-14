@@ -5,14 +5,19 @@ const fetch = require("node-fetch");
 const puppeteer = require("puppeteer-core");
 const cors = require("cors");
 
+
+const app = express();
+
 // CORS - allow only your frontend origin
 app.use(cors({
   origin: "https://saveforyourtrip.com"
 }));
 
 
-const app = express();
+
+// Parse application/x-www-form-urlencoded and JSON bodies
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.post("/submit", async (req, res) => {
   const { name, email, phone, datetour, npart, tour_details } = req.body;
