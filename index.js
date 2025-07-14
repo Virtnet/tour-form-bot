@@ -40,7 +40,6 @@ const browser = await puppeteer.launch({
     await page.type('input[name="leadPhone"]', phone);
     await page.type('textarea[name="notes"]', `\nמספר משתתפים: ${npart}\n${tour_details}`);
 
-    await page.click('input[type="submit"]');
     await Promise.all([
       page.click('button[type="submit"]'),
       page.waitForNavigation({ waitUntil: 'networkidle0' }) // or 'domcontentloaded'
