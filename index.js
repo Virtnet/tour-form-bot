@@ -42,7 +42,7 @@ const browser = await puppeteer.launch({
 
     await Promise.all([
       page.click('button[type="submit"]'),
-      page.waitForNavigation({ waitUntil: 'networkidle0' }) // or 'domcontentloaded'
+      page.waitForNavigation({ waitUntil: 'domcontentloaded' }) // or 'domcontentloaded'
     ]);
     
     await page.waitForTimeout(3000);
