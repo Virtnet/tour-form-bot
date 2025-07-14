@@ -13,6 +13,11 @@ app.use(cors({
   origin: "https://saveforyourtrip.com"
 }));
 
+// Block direct access to home page
+app.get("/", (req, res) => {
+  res.status(403).send("Forbidden");
+});
+
 app.get("/submit", (req, res) => {
   res.status(403).send("Forbidden");
 });
