@@ -1,7 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const chromium = require("@sparticuz/chromium");
+const fetch = require("node-fetch");
 const puppeteer = require("puppeteer-core");
+const cors = require("cors");
+
+// CORS - allow only your frontend origin
+app.use(cors({
+  origin: "https://saveforyourtrip.com"
+}));
+
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
