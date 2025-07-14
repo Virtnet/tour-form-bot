@@ -13,6 +13,9 @@ app.use(cors({
   origin: "https://saveforyourtrip.com"
 }));
 
+app.get("/submit", (req, res) => {
+  res.status(403).send("Forbidden");
+});
 
 
 // Parse application/x-www-form-urlencoded and JSON bodies
@@ -24,12 +27,19 @@ app.post("/submit", async (req, res) => {
   console.log("✅ Received form submission:", req.body);
 
   try {
-const browser = await puppeteer.launch({
-  args: chromium.args,
-  defaultViewport: chromium.defaultViewport,
-  executablePath: await chromium.executablePath(),
-  headless: chromium.headless,
-});
+
+    await fetch("https://script.google.com/macros/s/AKfycbxk4sV2xLZcKbnMQRtaMer-FxeFsUk1JjvivIK4g6f5fFFlXvQfzD92GsbEurjN7Fvw/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, phone, datetour, npart, tour_details })
+    });
+
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
 
     const page = await browser.newPage();
     await page.goto("https://rocketour.co/affiliate-form/", { waitUntil: "networkidle2" });
