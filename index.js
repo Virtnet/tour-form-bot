@@ -52,7 +52,11 @@ app.post("/submit", async (req, res) => {
 
     console.log("👉 Clicking submit...");
     await page.click('button[type="submit"]');
-    await page.waitForTimeout(3000); // wait for form to process
+    
+    console.log("⏳ Waiting for confirmation message...");
+    await page.waitForSelector('div.bg-green-50.border-green-200', { timeout: 5000 });
+    
+    console.log("✅ Confirmation received!");
     await browser.close();
 
     res.send("✅ Tour submitted successfully!");
