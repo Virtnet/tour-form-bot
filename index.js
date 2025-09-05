@@ -39,6 +39,9 @@ app.use(cors({ origin: ALLOWED_ORIGIN }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Health check
+app.get("/healthz", (_, res) => res.send("OK - api.saveforyourtrip.com"));
+
 // Block direct access to home page
 app.get("/", (req, res) => {
   res.status(403).send("Forbidden");
@@ -47,10 +50,6 @@ app.get("/", (req, res) => {
 app.get("/submit", (req, res) => {
   res.status(403).send("Forbidden");
 });
-
-
-// Health check
-app.get("/", (_, res) => res.send("OK - new form service"));
 
 
 // Main submit endpoint
@@ -161,6 +160,6 @@ async function backgroundRocketourSubmission(data, src) {
   }
 }
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server is running.");
+app.listen(PORT, () => {
+  console.log('Server is running on port ${PORT}.');
 });
