@@ -4,7 +4,7 @@
   "description": "Tour form bot - New version with Google Sheets & Rocketour integration",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
